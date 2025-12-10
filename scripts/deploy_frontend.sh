@@ -2,7 +2,7 @@
 set -ex
 
 # Importamos las variables de entorno
-source .env
+source .env_frontend
 
 # Eliminamos descargas previas de WP-CLI
 rm -f /tmp/wp-cli.phar
@@ -19,21 +19,15 @@ mv /tmp/wp-cli.phar /usr/local/bin/wp
 # Eliminamos instalaciones previas de WordPress
 rm -rf /var/www/html/*
 
-# Descargamos WordPress en español en el directorio /var/www/html
+# Descargamos WordPress en español
 wp core download --locale=es_ES --path=/var/www/html --allow-root
 
-# Creamos una base de datos de wordpress
-mysql -u root -e "DROP DATABASE IF EXISTS $DB_NAME"
-mysql -u root -e "CREATE DATABASE $DB_NAME"
+# -----------------------------------------------------------------
+# AQUÍ HEMOS BORRADO LAS LÍNEAS DE MYSQL (CREATE DATABASE, ETC.)
+# Esa tarea ya la hizo el script del Backend.
+# -----------------------------------------------------------------
 
-# Creamos un usuario/contraseña para la base de datos
-mysql -u root -e "DROP USER IF EXISTS $DB_USER@'$IP_CLIENTE_MYSQL'"
-mysql -u root -e "CREATE USER $DB_USER@'$IP_CLIENTE_MYSQL' IDENTIFIED BY '$DB_PASSWORD'"
-
-# Le asignamos privilegios al usuario
-mysql -u root -e "GRANT ALL PRIVILEGES ON $DB_NAME.* TO $DB_USER@'$IP_CLIENTE_MYSQL'"
-
-# Creamos el archivo wp-config.php
+# Creamos el archivo wp-config.php conectando al HOST REMOTO ($DB_HOST)
 wp config create \
   --dbname=$DB_NAME \
   --dbuser=$DB_USER \
@@ -52,18 +46,18 @@ wp core install \
   --path=/var/www/html \
   --allow-root  
 
-# Configuramos los enlaces permanentes (TODO EN UNA LÍNEA)
+# Configuramos los enlaces permanentes
 wp rewrite structure '/%postname%/' --path=/var/www/html --allow-root
 
-# Instalamos el plugin de WPS Hide Login (TODO EN UNA LÍNEA)
+# Instalamos y activamos el plugin WPS Hide Login
 wp plugin install wps-hide-login --activate --path=/var/www/html --allow-root
 
-# Configuramos una URL personalizada para la página de login
+# Configuramos la URL personalizada de login
 wp option update whl_page $URL_HIDE_LOGIN --path=/var/www/html --allow-root
 
-# Copiamos el archivo .htaccess a /var/www/html
-# Asegúrate de que la ruta ../htaccess/.htaccess existe, si no, esta línea fallará.
-cp ../htaccess/.htaccess /var/www/html
+# Copiamos el .htaccess (Solo si tienes este archivo en esa ruta relativa)
+# Si no tienes un .htaccess personalizado, WP genera uno básico automáticamente tras configurar los permalinks.
+# cp ../htaccess/.htaccess /var/www/html 
 
-# Modificamos el propietario y el grupo de /var/www/html a www-data
+# Permisos finales
 chown -R www-data:www-data /var/www/html

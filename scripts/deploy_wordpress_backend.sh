@@ -20,3 +20,4 @@ mysql -u root -e "GRANT ALL PRIVILEGES ON $WORDPRESS_DB_NAME.* TO '$WORDPRESS_DB
 
 
 
+h 
