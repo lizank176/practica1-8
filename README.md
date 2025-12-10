@@ -14,4 +14,4 @@ Frontend (Apache): Permite tráfico HTTP (80), HTTPS (443) y SSH (22) desde cual
 El primer paso consistió en aprovisionar la máquina que actuará como base de datos. Es fundamental configurar MySQL para que acepte conexiones externas, ya que el servidor web (Frontend) se conectará a través de la red privada de AWS.
 ### Instalación y configuración de red (install_lamp_backend.sh)
 En este script, instalamos mysql-server y modificamos la configuración bind-address. Por defecto, MySQL solo escucha en 127.0.0.1. Usamos sed para cambiar esto a la IP privada específica, permitiendo así la conexión desde el Frontend.
-![alt text](img/lamp_backend.png)
+![alt text]( /lamp_backend.png)
