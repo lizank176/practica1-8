@@ -2,7 +2,7 @@
 set -ex
 
 # Importamos el archivo .env
-source .env
+source .env_frontend
 
 # Copiamos la plantilla del archivo VirtualHost en el servidor
 cp ../conf/000-default.conf /etc/apache2/sites-available
